@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  redis:
+
+  postgresContainer:
+    container_name: "postgres"
+    image: postgres
+    hostname: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=rust
+      - TZ=America/Sao_Paulo
+    volumes:
+      - postgres_docker:/var/lib/postgresql/dat
+
+volumes:
+  postgres_docker:
