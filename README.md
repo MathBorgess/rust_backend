@@ -47,6 +47,25 @@ The Rocket framework is used to create the API, and it is used to create the rou
 In the file Rocket.toml, its possible to configure some infra settings, like the port, the address, the environment, and the log level.
 [Rocket.toml website](https://rocket.rs/v0.4/guide/configuration/)
 
+### Explain the use of the Diesel ORM in the project
+
+The Diesel ORM is used to connect the database with the project, and it is used to create the models, and the migrations, and also the database connection.
+The issue here is that we need the lib to connect to the database (LIBPQ for Postgres) and also the diesel_cli to create the migrations and the models, so you will need to install everything to make it work even in the build of dockerfile.
+
+You will have to call the diesel_cli to create the migrations and the schemas, and then you will have to call the diesel_cli to run the migrations. The command to create the migrations is:
+
+```bash
+diesel migration generate <MIGRATION_NAME>
+```
+
+After you complete of writing the up and down migration you could run, reset and redo:
+
+```bash
+    diesel migration run
+    diesel migration reset
+    diesel migration redo
+```
+
 ### Next steps!
 
-The thing is to config the DIESEL ORM, and after upload this project to some cloud provider, and make the database connection with some database.
+Make relation between the models, rearchitect the project as a good monolith api, make sure that the Rust container is working, and then deploy to the cloud.

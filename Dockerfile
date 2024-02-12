@@ -1,15 +1,25 @@
-FROM rustlang/rust:nightly-alpine as builder
-WORKDIR usr/app
+FROM debian:jessie AS builder
 
-COPY . .
+# You'll need to change `libmysqlclient-dev` to `libpq-dev` if you're using Postgres
+RUN apt-get update && apt-get install -y curl libmysqlclient-dev build-essential
+
+# Install rust
+RUN curl https://sh.rustup.rs/ -sSf | \
+  sh -s -- -y --default-toolchain nightly
+
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+ADD . ./
+
 RUN cargo build --release
-# remove the dummy build.
-RUN cargo clean -p api
 
-# second stage.
-FROM debian:buster-slim
-WORKDIR /usr/local/bin
+FROM debian:jessie
 
-COPY --from=builder /app/target/release/api .
+RUN apt-get update && apt-get install -y libmysqlclient-dev
 
-CMD ["./api"]
+COPY --from=builder \
+  /target/release/rocket-app \
+  /usr/local/bin/
+
+WORKDIR /root
+CMD ROCKET_PORT=$PORT /usr/local/bin/rocket-app
